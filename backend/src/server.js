@@ -6,6 +6,7 @@ import uploadRoutes from './routes/upload.js'; // Import the upload router
 import cookieParser from 'cookie-parser';
 import fileRoutes from './routes/fileRoutes.js';
 import apiRoutes from './routes/api.js';
+import cors from 'cors';
 
 dotenv.config();
 
@@ -19,6 +20,13 @@ mongoose
   .connect(process.env.MONGO_URI)
   .then(() => console.log("MongoDB connected"))
   .catch((err) => console.error("MongoDB connection error:", err));
+
+  app.use(
+    cors({
+      origin: "http://localhost:5173",
+      credentials: true,
+    })
+  );
 
 // Routes
 app.use('/api/auth', authRoutes);
