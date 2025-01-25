@@ -1,7 +1,13 @@
+import Navbar from '../components/Navbar';
+import { Link } from 'react-router-dom';
+import { useAuthStore } from '../store/useAuthStore';
+
 const HomePage = () => {
+    const {logout} = useAuthStore();
     return (
         <div className="w-full h-full">
-        <h1 className="text-2xl">Home Page</h1>
+            <Navbar/>
+            <button onClick={logout}>logout</button>
         </div>
     )
 }

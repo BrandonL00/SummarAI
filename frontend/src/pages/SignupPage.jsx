@@ -46,17 +46,17 @@ const SignUpPage = () => {
   };
 
   return (
-    <div className="h-dvh min-h-max grid gap-4 sm:gap-2 justify-center items-center bg-blue-200 dark:bg-slate-700">
+    <div className="h-dvh min-h-max grid gap-4 sm:gap-2 justify-center items-center bg-lightGray-50">
 
       {/*Logo and Welcome Message:*/}
       <div className="mt-24 grid justify-center items-center text-center">
         <img className="justify-self-center" src="/logo.svg" alt="logo" />
-        <h1 className="font-bold text-3xl"> Welcome to Entropy! </h1>
+        <h1 className="font-bold text-3xl"> Welcome to SummarAI! </h1>
         <p className="text-lg"> Sign up to get started </p>
       </div>
 
       {/*Sign Up Form:*/}
-      <div className="card card-normal bg-base-100 w-72 sm:w-96 shadow-2xl mb-24">
+      <div className="card bg-white w-full shadow-2xl mb-24 rounded-2xl px-10">
         <div className="card-body">
           <form onSubmit={handleSubmit} className="gap-6"> 
 
