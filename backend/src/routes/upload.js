@@ -1,18 +1,28 @@
 import express from 'express';
-import { s3, upload } from '../s3config.js'; // Import S3 and multer configuration
+import { s3, upload } from '../s3Config.js'; // AWS S3 configuration
+import File from '../models/File.js'; // File schema/model for MongoDB
+import { protectRoute } from '../middleware/auth.middleware.js'; // Authentication middleware
 
 const router = express.Router();
 
-// File upload route
-router.post('/', upload.single('pdf'), async (req, res) => {
+/**
+ * POST /api/upload
+ * Upload a PDF file for the authenticated user and store metadata in MongoDB.
+ */
+router.post('/', protectRoute, upload.single('pdf'), async (req, res) => {
   try {
+    const userId = req.user._id; // Use `req.user` populated by `protectRoute`
+
+    // Ensure a file is uploaded
     if (!req.file) {
       return res.status(400).json({ message: 'No file uploaded' });
     }
 
+    // Access the uploaded file
     const file = req.file;
-    const fileKey = `${Date.now()}-${file.originalname}`;
+    const fileKey = `${userId}/${Date.now()}-${file.originalname}`; // Organized by user in S3
 
+    // S3 upload parameters
     const params = {
       Bucket: process.env.AWS_BUCKET_NAME,
       Key: fileKey,
@@ -20,7 +30,17 @@ router.post('/', upload.single('pdf'), async (req, res) => {
       ContentType: file.mimetype,
     };
 
+    // Upload the file to S3
     const result = await s3.upload(params).promise();
+
+    // Save file metadata to MongoDB
+    const newFile = new File({
+      userId, // User ID from the authenticated user
+      fileName: file.originalname, // Original file name
+      fileKey, // S3 file key
+      fileUrl: result.Location, // S3 file URL
+    });
+    await newFile.save(); // Save metadata to MongoDB
 
     res.status(200).json({
       message: 'File uploaded successfully',
@@ -31,5 +51,4 @@ router.post('/', upload.single('pdf'), async (req, res) => {
     res.status(500).json({ error: 'Failed to upload file' });
   }
 });
-
-export default router;
+ export default router;

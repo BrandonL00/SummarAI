@@ -1,14 +1,15 @@
 import express from 'express';
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
-import cors from 'cors';
 import authRoutes from './routes/auth.js';
 import uploadRoutes from './routes/upload.js'; // Import the upload router
+import cookieParser from 'cookie-parser';
+import fileRoutes from './routes/fileRoutes.js';
 
 dotenv.config();
 
 const app = express();
-app.use(cors());
+app.use(cookieParser());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
@@ -19,6 +20,7 @@ mongoose.connect(process.env.MONGO_URI).then(() => console.log('MongoDB connecte
 // Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/upload', uploadRoutes); // Use the upload router
+app.use('/api/files', fileRoutes);
 
 // Start the server
 const PORT = process.env.PORT || 5000;
