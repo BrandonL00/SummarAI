@@ -1,8 +1,9 @@
-const express = require('express');
+import express from 'express';
+import { summarizeText } from '../controllers/gptController.js';
+
 const router = express.Router();
-const { summarizeText } = require('../controllers/gptController');
 
 // Summarization route
 router.post('/summarize', summarizeText);
 
-module.exports = router;
+export default router;
