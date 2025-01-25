@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import { useAuthStore } from '../store/useAuthStore';
+import Button from '@mui/material/Button';
 
 const SignUpPage = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -56,7 +57,7 @@ const SignUpPage = () => {
       </div>
 
       {/*Sign Up Form:*/}
-      <div className="bg-white w-full shadow-2xl mb-24 rounded-2xl py-20 px-10">
+      <div className="card bg-white w-full shadow-2xl mb-24 rounded-2xl px-10">
         <div className="card-body">
           <form onSubmit={handleSubmit} className="gap-6"> 
 

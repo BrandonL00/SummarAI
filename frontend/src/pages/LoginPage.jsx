@@ -28,7 +28,7 @@ const LoginPage = () => {
       </div>
 
       {/*Sign in Form:*/} 
-      <div className="bg-white w-72 sm:w-96 shadow-2xl mb-32 justify-self-center rounded-2xl">
+      <div className="card bg-white w-72 sm:w-96 shadow-2xl mb-32 justify-self-center rounded-2xl">
         <div className="card-body">
           <form onSubmit={handleSubmit} className="gap-6">
 
