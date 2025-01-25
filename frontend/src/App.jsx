@@ -3,6 +3,7 @@ import HomePage from "./pages/HomePage";
 import LoginPage from "./pages/LoginPage";
 import { useAuthStore } from "./store/useAuthStore";
 import { useEffect } from "react";
+import {Toaster} from "react-hot-toast"
 import SignupPage from "./pages/SignupPage";
 
 function App() {
@@ -19,9 +20,10 @@ function App() {
           path="/"
           element={authUser ? <HomePage /> : <Navigate to="/login" />}
         />
-        <Route path="/login" element={<LoginPage />} />
-        <Route path="/signup" element={<SignupPage />} />
+        <Route path="/login" element={authUser ? <LoginPage /> : <Navigate to="/" />} />
+        <Route path="/signup" element={authUser ? <SignupPage /> : <Navigate to="/" />} />
       </Routes>
+      <Toaster/>
     </div>
   );
 }
