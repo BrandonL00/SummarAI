@@ -3,7 +3,6 @@ import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import { useAuthStore } from '../store/useAuthStore';
-import Button from '@mui/material/Button';
 
 const SignUpPage = () => {
   const [showPassword, setShowPassword] = useState(false);
