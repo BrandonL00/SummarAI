@@ -1,13 +1,18 @@
 import Navbar from '../components/Navbar';
-import { Link } from 'react-router-dom';
-import { useAuthStore } from '../store/useAuthStore';
+import Bookshelf from '../components/Bookshelf';
+import Sidebar from '../components/Sidebar';
+
 
 const HomePage = () => {
-    const {logout} = useAuthStore();
+
     return (
         <div className="w-full h-full">
             <Navbar/>
-            <button onClick={logout}>logout</button>
+            <div className="flex">
+                <Sidebar/>
+                <Bookshelf/>
+            </div>
+
         </div>
     )
 }
