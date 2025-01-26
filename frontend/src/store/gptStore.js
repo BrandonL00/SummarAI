@@ -5,16 +5,16 @@ import { pdfStore } from "./pdfStore";
 import { extractFileKeyFromUrl } from "../utils/urlUtils";
 
 export const gptStore = create((set, get) => ({
-  currentPage: 11,
+  currentPage: 1,
+
+  setCurrentPage: (page) => set({ currentPage: page }),
 
   summarizeUpTo: async () => {
     const { selectedFile } = pdfStore.getState(); // Access selectedFile from pdfStore
     const { currentPage } = get(); // Access currentPage from gptStore
 
-    console.log(selectedFile);
     const fileKey = extractFileKeyFromUrl(selectedFile.url);
 
-    console.log(fileKey);
     if (!fileKey) {
       toast.error("Invalid file URL.");
       return;

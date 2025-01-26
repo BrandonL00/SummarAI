@@ -33,7 +33,7 @@ const LoginPage = () => {
       {/*Email Field:*/}
       <div className="form-control">
         <label className="label pb-1">
-          <span className="label-text text-base font-medium">Email</span>
+          <span className="label-text text-base font-medium dark:text-white">Email</span>
         </label>
         <div className="relative">
           <img
@@ -43,7 +43,7 @@ const LoginPage = () => {
           />
           <input
             type="text"
-            className="input input-bordered w-full pl-10 h-11 text-base"
+            className="input input-bordered w-full pl-10 h-11 text-base "
             placeholder="you@example.com"
             value={formData.email}
             onChange={(e) => setFormData({ ...formData, email: e.target.value })}
@@ -54,7 +54,7 @@ const LoginPage = () => {
       {/*Password Field:*/}
       <div className="form-control">
         <label className="label pb-1">
-          <span className="label-text text-base font-medium">Password</span>
+          <span className="label-text text-base font-medium dark:text-white">Password</span>
         </label>
         <div className="relative">
           <img src="/lock.svg" alt="lock icon" className="absolute w-5 h-5 top-1/2 transform -translate-y-1/2 left-3" />
@@ -84,7 +84,7 @@ const LoginPage = () => {
       </button>
 
       <div className="text-center mt-4">
-        <p className="text-base-content/60 text-sm">
+        <p className="text-base-content/60 text-sm dark:text-white">
           Don't have an account?{" "}
           <Link to="/signup" className="link link-info dark:text-white">
             Sign Up
