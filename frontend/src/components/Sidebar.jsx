@@ -44,9 +44,9 @@ const Sidebar = () => {
               <span className="text-purple-600 font-bold" style={{ fontSize: "clamp(1rem, 3vw, 2rem)" }}>
                 {booksRead}
               </span>
-              <span className="text-black">/{totalBooks}</span>
+              <span className="text-gray-400">/{totalBooks}</span>
             </span>
-            <span className="font-light text-black" style={{ fontSize: "clamp(0.65rem, 1.5vw, 1rem)" }}>
+            <span className="font-light text-gray-400" style={{ fontSize: "clamp(0.65rem, 1.5vw, 1rem)" }}>
               finished
             </span>
           </div>

@@ -1,66 +1,68 @@
-import { Link } from "react-router-dom";
-import { useRef, useState } from "react";
-import { pdfStore } from "../store/pdfStore";
-import { useAuthStore } from "../store/useAuthStore";
+import React, { useRef, useEffect, useState } from "react"
+import { Link } from "react-router-dom"
+import { pdfStore } from "../store/pdfStore"
+import { useAuthStore } from "../store/useAuthStore"
+import { ThemeSwitcher } from "./ThemeSwitcher"
 
 const Navbar = () => {
-  const fileInputRef = useRef(null);
-  const { setFile, uploadFile, setSelectedFile } = pdfStore();
-  const { authUser, logout } = useAuthStore();
-  const [isOpen, setIsOpen] = useState(false);
+  const fileInputRef = useRef(null)
+  const { setFile, uploadFile, setSelectedFile } = pdfStore()
+  const { authUser, logout } = useAuthStore()
+  const [isDarkTheme, setIsDarkTheme] = useState(false)
+
+  useEffect(() => {
+    const updateTheme = () => {
+      setIsDarkTheme(document.documentElement.getAttribute("data-theme") === "dark")
+    }
+
+    // Initial theme check
+    updateTheme()
+
+    // Set up a MutationObserver to watch for theme changes
+    const observer = new MutationObserver(updateTheme)
+    observer.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ["data-theme"],
+    })
+
+    return () => observer.disconnect()
+  }, [])
 
   const handleUploadClick = () => {
-    fileInputRef.current.click();
-  };
+    fileInputRef.current.click()
+  }
 
   const handleFileChange = (e) => {
-    const file = e.target.files[0];
+    const file = e.target.files[0]
     if (file) {
-      console.log(file);
-      setFile(file);
-      uploadFile();
+      console.log(file)
+      setFile(file)
+      uploadFile()
     }
-  };
-
-  const toggleDropdown = () => {
-    setIsOpen(!isOpen);
-  };
+  }
 
   const handleButtonPress = () => {
-    setSelectedFile(null);
-  };
+    setSelectedFile(null)
+  }
 
   return (
-    <div className="w-full flex items-center px-10 pt-6 pb-4">
-      {/* Logo */}
-      <div className="flex items-center">
-        <Link to="/">
-          <img
-            src="/logo.svg"
-            alt="Logo"
-            className="h-12 w-12"
-            onClick={handleButtonPress}
-          />
+    <div className="navbar bg-base-100 px-10 py-6">
+      <div className="flex-1">
+        <Link to="/" className="flex items-center" onClick={handleButtonPress}>
+          <img src={isDarkTheme ? "/logo-white.svg" : "/logo.svg"} alt="SummarAI Logo" className="h-12 w-12" />
+          <h1 className="text-3xl font-semibold pl-4 text-primary">SummarAI</h1>
         </Link>
-        <h1 className="text-3xl font-semibold pl-4">SummarAI</h1>
       </div>
-
-      <div className="ml-auto flex items-center gap-8">
-        {/* Profile Picture Dropdown */}
-        <div className="relative inline-block text-left">
-          <button
-            onClick={toggleDropdown}
-            className="inline-flex w-full justify-center rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-100 focus:ring-blue-500"
-          >
-            <img
-              src={`https://ui-avatars.com/api/?background=random&name=${authUser.name}`}
-              alt="Profile"
-              className="size-14 rounded-full object-cover"
-            />
-          </button>
-
-          {isOpen && (
-            <div className="absolute right-0 mt-2 w-96 origin-top-right z-50">
+      <div className="flex-none gap-8">
+        <ThemeSwitcher className="text-primary" />
+        <div className="dropdown dropdown-end">
+          <label tabIndex={0} className="btn btn-ghost btn-circle avatar">
+            <div className="w-14 rounded-full">
+              <img src={`https://ui-avatars.com/api/?background=random&name=${authUser.name}`} alt={authUser.name} />
+            </div>
+          </label>
+          <ul tabIndex={0} className="mt-3 z-[1] p-2 shadow menu menu-sm dropdown-content bg-base-100 rounded-box w-96">
+            <li>
               <div className="card bg-base-100 shadow-xl">
                 <figure>
                   <img
@@ -71,50 +73,35 @@ const Navbar = () => {
                 </figure>
                 <div className="card-body">
                   <div className="flex items-center gap-3">
-                    <img src="/person.svg" alt="Name" className="size-5" />
-                    <h2 className="card-title">Name: <p className="pl-3">{authUser.name}</p></h2>
+                    <img src="/person.svg" alt="Name" className="w-5 h-5" />
+                    <h2 className="card-title">
+                      Name: <span className="font-normal">{authUser.name}</span>
+                    </h2>
                   </div>
-
                   <div className="flex items-center gap-3 pt-1">
-                    <img src="/mail.svg" alt="Email" className="size-5" />
-                    <h2 className="flex">Email: <p className="pl-10">{authUser.email}</p></h2>
+                    <img src="/mail.svg" alt="Email" className="w-5 h-5" />
+                    <p>
+                      Email: <span className="font-normal">{authUser.email}</span>
+                    </p>
                   </div>
                   <div className="card-actions justify-end">
-                    <button
-                      className="btn btn-primary"
-                      onClick={() => {
-                        logout();
-                        setIsOpen(false);
-                      }}
-                    >
+                    <button className="btn btn-error" onClick={logout}>
                       Logout
                     </button>
                   </div>
                 </div>
               </div>
-            </div>
-          )}
+            </li>
+          </ul>
         </div>
-
-        {/* Upload Button */}
-        <button
-          className="relative bg-gradient-to-r from-purple-400 to-blue-500 text-white rounded-full px-8 h-12 overflow-hidden group transition-all duration-300 ease-out hover:scale-105"
-          onClick={handleUploadClick}
-        >
-          <span className="absolute inset-0 w-full h-full transition duration-300 ease-out transform -translate-x-full bg-gradient-to-r from-purple-500 to-blue-600 group-hover:translate-x-0"></span>
-          <span className="relative flex items-center justify-center h-full">
-            <h1 className="text-xl z-10 font-semibold">Upload</h1>
-          </span>
+        <button className="btn btn-primary text-primary-content rounded-full px-8 h-12" onClick={handleUploadClick}>
+          Upload
         </button>
-        <input
-          type="file"
-          ref={fileInputRef}
-          className="hidden"
-          onChange={handleFileChange}
-        />
+        <input type="file" ref={fileInputRef} className="hidden" onChange={handleFileChange} />
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default Navbar;
+export default Navbar
+
