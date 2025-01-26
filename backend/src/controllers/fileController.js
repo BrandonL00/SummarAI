@@ -78,7 +78,7 @@ export const generateSignedUrl = async (fileKey) => {
   const params = {
     Bucket: process.env.AWS_BUCKET_NAME,
     Key: fileKey,
-    Expires: 60, // URL expiration time
+    Expires: 10 * 60, // URL expiration time (10 minutes)
   };
 
   try {
