@@ -7,6 +7,7 @@ import cookieParser from 'cookie-parser';
 import fileRoutes from './routes/fileRoutes.js';
 import gptRoutes from './routes/gptRoutes.js';
 import cors from 'cors';
+import userRoutes from './routes/user.js';
 
 dotenv.config();
 
@@ -33,6 +34,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/upload', uploadRoutes); // Use the upload router
 app.use('/api/files', fileRoutes);
 app.use('/api/gpt', gptRoutes);
+app.use('/api/user', userRoutes);
 
 // Start the server
 const PORT = process.env.PORT || 5000;

@@ -1,38 +1,50 @@
 import User from '../models/User.js';
 
-import User from "../models/User.js"; // Adjust the path to your User model as needed
-
 export const toggleHasRead = async (req, res) => {
-  const { userId, fileKey } = req.body;
+    const userId = req.user._id;
+    const { fileKey } = req.body;
 
-  try {
-    // Validate inputs
-    if (!userId || !fileKey) {
-      return res.status(400).json({ success: false, message: "Missing userId or fileKey" });
-    }
+    try {
+        // Validate inputs
+        if (!userId) {
+        return res.status(400).json({ success: false, message: "User ID is missing" });
+        }
 
-    // Find the user by ID and check if the fileKey exists
-    const user = await User.findOne({ _id: userId, "fileKeys.key": fileKey });
+        if (!fileKey || typeof fileKey !== "string") {
+        return res.status(400).json({ success: false, message: "Invalid or missing file key" });
+        }
 
-    if (!user) {
-      return res.status(404).json({ success: false, message: "User or file key not found" });
-    }
+        // Retrieve the user and ensure fileKey exists
+        const user = await User.findById(userId);
 
-    // Find the specific fileKey in the array and toggle its hasRead value
-    const fileKeyItem = user.fileKeys.find((item) => item.key === fileKey);
-    if (fileKeyItem) {
-      fileKeyItem.hasRead = !fileKeyItem.hasRead;
-      await user.save(); // Save the updated user document
-      return res.status(200).json({
+        if (!user) {
+        return res
+            .status(404)
+            .json({ success: false, message: "User not found" });
+        }
+
+        // Find the specific fileKey in the fileKeys array
+        const fileKeyItem = user.fileKeys.find((item) => item.key === fileKey);
+
+        if (!fileKeyItem) {
+        return res
+            .status(404)
+            .json({ success: false, message: "File key not found in user's fileKeys" });
+        }
+
+        // Toggle the hasRead value
+        fileKeyItem.hasRead = !fileKeyItem.hasRead;
+
+        // Save the updated user document
+        await user.save();
+
+        return res.status(200).json({
         success: true,
         message: "Toggled successfully",
         data: fileKeyItem,
-      });
+        });
+    } catch (error) {
+        console.error("Error toggling hasRead:", error);
+        return res.status(500).json({ success: false, message: "An error occurred", error: error.message });
     }
-
-    return res.status(404).json({ success: false, message: "File key not found in user's fileKeys" });
-  } catch (error) {
-    console.error("Error toggling hasRead:", error);
-    return res.status(500).json({ success: false, message: "An error occurred", error: error.message });
-  }
 };
