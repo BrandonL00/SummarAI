@@ -35,15 +35,18 @@ const Navbar = () => {
 
         {/* Upload Button */}
         <button
-          className="bg-blue-500 text-white rounded-3xl px-7 h-12 transition-transform transform hover:scale-105"
+          className="relative bg-gradient-to-r from-purple-400 to-blue-500 text-white rounded-3xl px-7 h-14 overflow-hidden group transition-all duration-300 ease-out hover:scale-105"
           onClick={handleUploadClick}
         >
-          <h1 className="text-lg">Upload</h1>
+          <span className="absolute inset-0 w-full h-full transition duration-300 ease-out transform -translate-x-full bg-gradient-to-r from-purple-500 to-blue-600 group-hover:translate-x-0"></span>
+          <span className="relative flex items-center justify-center h-full">
+            <h1 className="text-2xl z-10">Upload</h1>
+          </span>
         </button>
-        <input
-          type="file"
-          ref={fileInputRef}
-          style={{ display: "none" }}
+        <input 
+          type="file" 
+          ref={fileInputRef} 
+          className="hidden" 
           onChange={handleFileChange}
         />
       </div>
