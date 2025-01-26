@@ -1,4 +1,7 @@
 import { OpenAI, } from 'openai';
+import axios from 'axios';
+import pdfParse from 'pdf-parse';
+import { generateSignedUrl } from '../controllers/fileController.js'; // Import your existing getFile function
 
 // Initialize OpenAI API
 const openai = new OpenAI({
@@ -28,3 +31,29 @@ export const summarizeText = async (req, res) => {
   }
 };
 
+export const parsePDFfromURL = async (req, res) => {
+  const { fileKey } = req.query;
+
+  if (!fileKey) {
+    return res.status(400).json({ error: 'File key is required' });
+  }
+
+  try {
+    // Step 1: Get the signed URL from the refactored getFile
+    const fileUrl = await generateSignedUrl( fileKey );
+
+    // Step 2: Fetch the PDF file from the signed URL
+    const response = await axios.get(fileUrl, { responseType: 'arraybuffer' });
+    const pdfBuffer = Buffer.from(response.data);
+
+    // Step 3: Parse the PDF content
+    const pdfData = await pdfParse(pdfBuffer);
+    const extractedText = pdfData.text;
+
+    // Step 4: Return the extracted text
+    res.status(200).json({ text: extractedText });
+  } catch (error) {
+    console.error('Error parsing PDF from URL:', error);
+    res.status(500).json({ error: 'Failed to parse PDF', details: error.message });
+  }
+};

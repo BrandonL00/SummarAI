@@ -74,3 +74,24 @@ export const getFile = async (req, res) => {
     res.status(500).json({ error: 'Failed to generate URL', details: error.message });
   }
 };
+
+export const generateSignedUrl = async (fileKey) => {
+  if (!fileKey) {
+    throw new Error('File key is required');
+  }
+
+  const params = {
+    Bucket: process.env.AWS_BUCKET_NAME,
+    Key: fileKey,
+    Expires: 60, // URL expiration time
+  };
+
+  try {
+    const signedUrl = await s3.getSignedUrlPromise('getObject', params);
+    return signedUrl; // Return the signed URL
+  } catch (error) {
+    console.error('Error generating signed URL:', error);
+    throw new Error('Failed to generate signed URL');
+  }
+};
+
