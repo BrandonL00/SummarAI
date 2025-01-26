@@ -60,14 +60,9 @@ export const getFile = async (req, res) => {
     return res.status(400).json({ error: 'File key is required' });
   }
 
-  const params = {
-    Bucket: process.env.AWS_BUCKET_NAME,
-    Key: fileKey,
-    Expires: 60,
-  };
-
   try {
-    const signedUrl = await s3.getSignedUrlPromise('getObject', params);
+    // Use the generateSignedUrl utility function
+    const signedUrl = await generateSignedUrl(fileKey);
     res.status(200).json({ url: signedUrl });
   } catch (error) {
     console.error('Error generating signed URL:', error);
