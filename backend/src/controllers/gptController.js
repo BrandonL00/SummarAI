@@ -366,7 +366,7 @@ export const generateFlashCardsUpTo = async (req, res) => {
       messages: [
         {
           role: 'user',
-          content: `Combine the following notes and generate ${numCards} flash cards: ${chunkSummaries.join(
+          content: `Combine the following notes and generate ${numCards} flash cards, and format as Q: or A: ${chunkSummaries.join(
             '\n\n'
           )}`,
         },
@@ -524,13 +524,11 @@ export const summarizeCharactersUpTo = async (req, res) => {
             {
               role: 'user',
               content: `
-                Please extract the important characters or people from the following text and format the response as a JSON array. 
+                Please extract the important characters or people from the following text and format the response as a string. 
                 Each object should have the following structure:
-                {
-                  "name": "<Name of the character>",
-                  "role": "<Role or significance of the character in the text>",
-                  "details": "<Brief details or actions related to the character>"
-                }
+                  name: "<Name of the character>",
+                  role: "<Role or significance of the character in the text>",
+                  details: "<Brief details or actions related to the character>"
                 Text: ${chunk}
               `,
             },
@@ -545,14 +543,12 @@ export const summarizeCharactersUpTo = async (req, res) => {
         {
           role: 'user',
           content: `
-          Combine the following JSON arrays into a single JSON array of characters, ensuring there are no duplicates.
+          Combine the following strings into a large string of characters, ensuring there are no duplicates.
           Each object should retain the structure:
-          {
-            "name": "<Name of the character>",
-            "role": "<Role or significance of the character>",
-            "details": "<Brief details>"
-          }
-          JSON arrays: ${chunkSummaries.join('\n\n')}
+            name: "<Name of the character>",
+            role: "<Role or significance of the character in the text>",
+            details: "<Brief details or actions related to the character>"
+          Text: ${chunkSummaries.join('\n\n')}
         `,
         },
       ],

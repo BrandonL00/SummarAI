@@ -1,6 +1,6 @@
 import express from 'express';
 import { protectRoute } from '../middleware/auth.middleware.js';
-import { deleteFile, getFile, getUserFileKeys, } from '../controllers/fileController.js';
+import { deleteFile, getFile, getUserFileKeys} from '../controllers/fileController.js';
 
 const router = express.Router();
 

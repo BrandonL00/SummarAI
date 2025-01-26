@@ -46,23 +46,36 @@ const Navbar = () => {
   }
 
   return (
-    <div className="navbar bg-base-100 px-10 py-6">
-      <div className="flex-1">
-        <Link to="/" className="flex items-center" onClick={handleButtonPress}>
-          <img src={isDarkTheme ? "/logo-white.svg" : "/logo.svg"} alt="SummarAI Logo" className="h-12 w-12" />
-          <h1 className="text-3xl font-semibold pl-4 text-primary">SummarAI</h1>
-        </Link>
-      </div>
-      <div className="flex-none gap-8">
-        <ThemeSwitcher className="text-primary" />
-        <div className="dropdown dropdown-end">
-          <label tabIndex={0} className="btn btn-ghost btn-circle avatar">
-            <div className="w-14 rounded-full">
-              <img src={`https://ui-avatars.com/api/?background=random&name=${authUser.name}`} alt={authUser.name} />
-            </div>
-          </label>
-          <ul tabIndex={0} className="mt-3 z-[1] p-2 shadow menu menu-sm dropdown-content bg-base-100 rounded-box w-96">
-            <li>
+    <div className="w-full flex items-center px-10 pt-6 pb-4">
+      {/* Logo */}
+
+      <Link to="/" className="flex items-center">
+        <img
+          src="/logo.svg"
+          alt="Logo"
+          className="h-12 w-12"
+          onClick={handleButtonPress}
+        />
+        <h1 className="text-3xl font-semibold pl-4">SummarAI</h1>
+      </Link>
+
+      <div className="ml-auto flex items-center gap-8">
+        {/* Profile Picture Dropdown */}
+        <div className="relative inline-block text-left">
+          <button
+            onClick={toggleDropdown}
+            className="inline-flex w-full justify-center rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-100 focus:ring-blue-500"
+          >
+            <img
+              src={`https://ui-avatars.com/api/?background=random&name=${authUser.name}`}
+              alt="Profile"
+              className="size-14 rounded-full object-cover"
+            />
+          </button>
+
+          {isOpen && (
+            <div className="absolute right-0 mt-2 w-96 origin-top-right z-50">
+
               <div className="card bg-base-100 shadow-xl">
                 <figure>
                   <img
@@ -73,16 +86,16 @@ const Navbar = () => {
                 </figure>
                 <div className="card-body">
                   <div className="flex items-center gap-3">
-                    <img src="/person.svg" alt="Name" className="w-5 h-5" />
+                    <img src="/person.svg" alt="Name" className="size-5" />
                     <h2 className="card-title">
-                      Name: <span className="font-normal">{authUser.name}</span>
+                      Name: <p className="pl-3">{authUser.name}</p>
                     </h2>
                   </div>
                   <div className="flex items-center gap-3 pt-1">
-                    <img src="/mail.svg" alt="Email" className="w-5 h-5" />
-                    <p>
-                      Email: <span className="font-normal">{authUser.email}</span>
-                    </p>
+                    <img src="/mail.svg" alt="Email" className="size-5" />
+                    <h2 className="flex">
+                      Email: <p className="pl-10">{authUser.email}</p>
+                    </h2>
                   </div>
                   <div className="card-actions justify-end">
                     <button className="btn btn-error" onClick={logout}>
