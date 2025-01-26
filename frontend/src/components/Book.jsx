@@ -20,6 +20,7 @@ export default function Book() {
   const { selectedFile } = pdfStore();
   const [file, setFile] = useState(selectedFile.url);
   const [numPages, setNumPages] = useState(null);
+  const [currentPage, setCurrentPage] = useState(1); // State for current page
   const [containerRef, setContainerRef] = useState(null);
   const [containerWidth, setContainerWidth] = useState(null);
 
@@ -39,6 +40,18 @@ export default function Book() {
     setFile(nextFile);
   }
 
+  function handlePreviousPage() {
+    if (currentPage > 1) {
+      setCurrentPage((prevPage) => prevPage - 1);
+    }
+  }
+
+  function handleNextPage() {
+    if (currentPage < numPages) {
+      setCurrentPage((prevPage) => prevPage + 1);
+    }
+  }
+
   return (
     <div className="Sample overflow-y-scroll h-screen mt-10 justify-center items-center place-content-center justify-self-center w-[55%] bg-white rounded-2xl">
       <div className="Sample__container">
@@ -48,17 +61,33 @@ export default function Book() {
             onLoadSuccess={({ numPages }) => setNumPages(numPages)}
             options={options}
           >
-            {Array.from(new Array(numPages), (_el, index) => (
-              <Page
-                key={`page_${index + 1}`}
-                pageNumber={index + 1}
-                width={
-                  containerWidth ? Math.min(containerWidth, maxWidth) : maxWidth
-                }
-                className="border border-gray-300 my-4"
-              />
-            ))}
+            <Page
+              pageNumber={currentPage}
+              width={
+                containerWidth ? Math.min(containerWidth, maxWidth) : maxWidth
+              }
+              className="border border-gray-300 my-4"
+            />
           </Document>
+        </div>
+        <div className="flex justify-between items-center mt-4">
+          <button
+            onClick={handlePreviousPage}
+            disabled={currentPage <= 1}
+            className="px-4 py-2 bg-blue-500 text-white rounded disabled:opacity-50"
+          >
+            Previous
+          </button>
+          <span>
+            Page {currentPage} of {numPages}
+          </span>
+          <button
+            onClick={handleNextPage}
+            disabled={currentPage >= numPages}
+            className="px-4 py-2 bg-blue-500 text-white rounded disabled:opacity-50"
+          >
+            Next
+          </button>
         </div>
       </div>
     </div>
