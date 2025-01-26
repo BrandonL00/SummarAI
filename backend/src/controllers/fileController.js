@@ -41,7 +41,7 @@ export const deleteFile = async (req, res) => {
 
     console.log(`MongoDB: File metadata for ${fileKey} deleted successfully`);
     // Step 3: Remove fileKey from User
-    await User.findByIdAndUpdate(deletedFile.userId, { $pull: { fileKeys: fileKey } });
+    await User.findByIdAndUpdate(deletedFile.userId, { $pull: { fileKeys: { key: fileKey, hasRead: false } }});
     
     res.status(200).json({
       message: `File ${fileKey} deleted successfully from S3 and MongoDB`,
