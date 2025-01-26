@@ -6,7 +6,7 @@ import Sidebar from '../components/Sidebar';
 const HomePage = () => {
 
     return (
-        <div className="w-full h-full">
+        <div className="w-full h-screen overflow-hidden">
             <Navbar/>
             <div className="flex">
                 <Sidebar/>

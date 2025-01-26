@@ -3,7 +3,7 @@ import bcrypt from 'bcryptjs'
 import generateTokenAndSetCookie from "../utils/generateToken.js"
 
 export const signup = async (req, res) => {
-  const { email, password } = req.body;
+  const { name, email, password } = req.body;
 
   try {
     // Check if user already exists
@@ -17,6 +17,7 @@ export const signup = async (req, res) => {
 
     // Create and save the new user
     const newUser = new User({
+      name,
       email,
       password: hashedPassword,
     });
