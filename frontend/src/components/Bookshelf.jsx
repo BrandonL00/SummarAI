@@ -1,8 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useStore } from "zustand";
 import { pdfStore } from "../store/pdfStore";
-import "@react-pdf-viewer/core/lib/styles/index.css";
-import "@react-pdf-viewer/default-layout/lib/styles/index.css";
 
 const Bookshelf = () => {
   const { files, getFiles } = useStore(pdfStore);
@@ -27,13 +25,6 @@ const Bookshelf = () => {
           </li>
         ))}
       </div>
-      {selectedFile && (
-        <div className="pdf-viewer">
-          <Worker workerUrl={`https://unpkg.com/pdfjs-dist@2.6.347/build/pdf.worker.min.js`}>
-            <Viewer fileUrl={selectedFile} />
-          </Worker>
-        </div>
-      )}
     </div>
   );
 };
