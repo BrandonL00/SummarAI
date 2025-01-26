@@ -103,12 +103,12 @@ const Bookshelf = () => {
       <div className="flex items-center">
         <div
           ref={bookshelfRef}
-          className="flex gap-10 overflow-x-scroll h-1/2 pb-4"
+          className="flex gap-10 overflow-x-scroll min-h-1/2 pb-4"
         >
           {files.map((file, index) => (
             <div
               key={index}
-              className="card bg-white w-[50dvh] h-[50dvh] text-lg font-semibold text-center overflow-clip flex flex-col justify-between"
+              className="card bg-white min-w-64 text-lg font-semibold text-center overflow-clip flex flex-col justify-between"
             >
               <div className="card-body gap-12">
                 {thumbnails[file.url] ? (
