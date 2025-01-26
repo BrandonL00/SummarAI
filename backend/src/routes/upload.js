@@ -2,6 +2,7 @@ import express from 'express';
 import { s3, upload } from '../s3Config.js'; // AWS S3 configuration
 import File from '../models/File.js'; // File schema/model for MongoDB
 import { protectRoute } from '../middleware/auth.middleware.js'; // Authentication middleware
+import User from '../models/User.js'; // User schema/model for MongoDB
 
 const router = express.Router();
 
@@ -40,6 +41,9 @@ router.post('/', protectRoute, upload.single('pdf'), async (req, res) => {
       fileKey, // S3 file key
       fileUrl: result.Location, // S3 file URL
     });
+
+    // Save fileKey to User
+    await User.findByIdAndUpdate(userId, { $push: { fileKeys: fileKey } });
     await newFile.save(); // Save metadata to MongoDB
 
     res.status(200).json({
