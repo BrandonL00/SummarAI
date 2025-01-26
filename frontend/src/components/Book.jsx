@@ -13,7 +13,7 @@ const options = {
 };
 
 const resizeObserverOptions = {};
-const scale = 0.55;
+const scale = 0.6;
 const maxWidth = 900;
 
 export default function Book() {
@@ -53,7 +53,7 @@ export default function Book() {
   }
 
   return (
-    <div className="Sample overflow-y-scroll w-[40%] h-[90%] mt-10 justify-center items-center place-content-center justify-self-center bg-white rounded-2xl">
+    <div className="Sample overflow-y-scroll w-[40%] h-[90%] mt-10 justify-center items-center place-content-center justify-self-center bg-white rounded-2xl translate-x-40">
       <div className="Sample__container">
         <div className="Sample__container__document flex justify-center items-center">
           <Document
