@@ -2,22 +2,35 @@ import { create } from "zustand";
 import { axiosInstance } from "../lib/axios.js";
 import toast from "react-hot-toast";
 import { pdfStore } from "./pdfStore";
+import { extractFileKeyFromUrl } from "../utils/urlUtils";
 
 export const gptStore = create((set, get) => ({
-  currentPage: 1,
+  currentPage: 11,
 
   summarizeUpTo: async () => {
     const { selectedFile } = pdfStore.getState(); // Access selectedFile from pdfStore
     const { currentPage } = get(); // Access currentPage from gptStore
 
+    console.log(selectedFile);
+    const fileKey = extractFileKeyFromUrl(selectedFile.url);
+
+    console.log(fileKey);
+    if (!fileKey) {
+      toast.error("Invalid file URL.");
+      return;
+    }
+
     if (!selectedFile) {
       toast.error("No file selected.");
       return;
     }
-
+    
     try {
-      const response = await axiosInstance.post(`/gpt/summarizeUpTo?fileKey=${selectedFile}&pageLimit=${currentPage}`);
+      const response = await axiosInstance.post(
+        `/gpt/summarizeUpTo?fileKey=${fileKey}&pageLimit=${currentPage}`
+      );
       toast.success("Summarization complete!");
+      console.log(response.data);
       return response.data;
     } catch (error) {
       console.error("Error summarizing:", error);
@@ -25,9 +38,14 @@ export const gptStore = create((set, get) => ({
       throw new Error("Failed to summarize");
     }
   },
-  generateFlashCardsUpTo: async (text) => {
+  generateFlashCardsUpTo: async () => {
+    const { selectedFile } = pdfStore.getState(); // Access selectedFile from pdfStore
+    const fileKey = extractFileKeyFromUrl(selectedFile.url);
+    const { currentPage } = get(); // Access currentPage from gptStore
     try {
-      const response = await axiosInstance.post(`/gpt/generateFlashCards?fileKey=${selectedFile}&cardNum=10&pageLimit=${currentPage}`);
+      const response = await axiosInstance.post(
+        `/gpt/generateFlashCards?fileKey=${fileKey}&cardNum=10&pageLimit=${currentPage}`
+      );
       toast.success("Flashcards generated successfully!");
       return response.data;
     } catch (error) {
@@ -36,8 +54,10 @@ export const gptStore = create((set, get) => ({
       throw new Error("Failed to generate flashcards");
     }
   },
-  summarizeCharacterUpTo: async (upTo) => {
-    const { selectedFile } = pdfStore.getState();
+  summarizeCharacterUpTo: async () => {
+    const { selectedFile } = pdfStore.getState(); // Access selectedFile from pdfStore
+    const fileKey = extractFileKeyFromUrl(selectedFile.url);
+    const { currentPage } = get(); // Access currentPage from gptStore
 
     if (!selectedFile) {
       toast.error("No file selected.");
@@ -45,7 +65,10 @@ export const gptStore = create((set, get) => ({
     }
 
     try {
-      const response = await axiosInstance.post(`/gpt/summarizeCharactersUpTo?fileKey=${fileKey}&pageLimit=${currentPage}`);
+      const response = await axiosInstance.post(
+        `/gpt/summarizeCharactersUpTo?fileKey=${fileKey}&pageLimit=${currentPage}`
+      );
+      console.log(response.data);
       toast.success("Character summary complete!");
       return response.data;
     } catch (error) {
