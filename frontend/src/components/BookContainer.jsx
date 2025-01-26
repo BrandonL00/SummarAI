@@ -1,6 +1,5 @@
 import { useStore } from 'zustand';
 import { pdfStore } from '../store/pdfStore';
-import PDF from './Pdf';
 import Book from './Book';
 
 
