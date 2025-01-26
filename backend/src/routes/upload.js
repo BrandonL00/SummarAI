@@ -43,7 +43,10 @@ router.post('/', protectRoute, upload.single('pdf'), async (req, res) => {
     });
 
     // Save fileKey to User
-    await User.findByIdAndUpdate(userId, { $push: { fileKeys: fileKey } });
+    await User.findByIdAndUpdate(userId, {
+      $push: { fileKeys: { key: fileKey, hasRead: false } },
+    });
+    
     await newFile.save(); // Save metadata to MongoDB
 
     res.status(200).json({

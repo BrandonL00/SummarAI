@@ -37,26 +37,31 @@ export const pdfStore = create((set) => ({
       const response = await axiosInstance.get("/files/file-keys", {
         withCredentials: true, // Include cookies for authentication
       });
-
+  
       const fileKeys = response.data.fileKeys;
+  
+      // Ensure the function works with the new structure
       const files = await Promise.all(
-        fileKeys.map(async (key) => {
+        fileKeys.map(async (file) => {
           const fileResponse = await axiosInstance.get(
-            `/files/getFile?fileKey=${key}`,
+            `/files/getFile?fileKey=${file.key}`, // Access the key property
             {
               withCredentials: true, // Include cookies for authentication
             }
           );
           console.log("File Response:", fileResponse);
-          return fileResponse.data;
+          return {
+            ...fileResponse.data, // Include file data
+            hasRead: file.hasRead, // Include the hasRead status
+          };
         })
       );
-
+  
       set({ files });
       toast.success("Files Retrieved Successfully");
     } catch (error) {
       console.error("Error retrieving files:", error);
       toast.error("Error retrieving files");
     }
-  },
+  },  
 }));

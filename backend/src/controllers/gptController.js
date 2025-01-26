@@ -318,3 +318,61 @@ export const summarizeUpTo = async (req, res) => {
     res.status(500).json({ error: 'Failed to summarize PDF using pdfjs-dist', details: error.message });
   }
 };
+
+export const generateFlashCards = async (req, res) => {
+  const { fileKey, numCards } = req.query;
+
+  if (!fileKey) {
+    return res.status(400).json({ error: 'File key is required' });
+  }
+
+  try {
+    // Step 1: Extract text from the PDF using pdfjs-dist
+    const extractedText = await fetchAndParsePDFWithPdfJs(fileKey);
+
+    if (!extractedText) {
+      return res.status(500).json({ error: 'Failed to extract text from PDF' });
+    }
+
+    // Step 2: Chunk the extracted text
+    const maxChunkSize = 3000; // Adjust as needed to fit within GPT's token limit
+    const chunks = chunkText(extractedText, maxChunkSize);
+
+    // Step 3: Generate flashcards over chunks
+    const chunkSummaries = await Promise.all(
+      chunks.map(async (chunk) => {
+        const response = await openai.chat.completions.create({
+          model: 'gpt-3.5-turbo', // Or gpt-4
+          messages: [
+            {
+              role: 'user',
+              content: `Note important details in the following text: ${chunk}`,
+            },
+          ],
+        });
+        return response.choices[0].message.content.trim();
+      })
+    );
+
+    // Step 4: Combine chunk summaries into a final summary
+    const finalSummaryResponse = await openai.chat.completions.create({
+      model: 'gpt-3.5-turbo',
+      messages: [
+        {
+          role: 'user',
+          content: `Combine the following notes and generate ${numCards} flash cards: ${chunkSummaries.join(
+            '\n\n'
+          )}`,
+        },
+      ],
+    });
+
+    const finalSummary = finalSummaryResponse.choices[0].message.content.trim();
+
+    // Step 5: Return the final summary
+    res.status(200).json({ summary: finalSummary });
+  } catch (error) {
+    console.error('Error generating flashcards using pdfjs-dist:', error);
+    res.status(500).json({ error: 'Failed to generate flashcards PDF using pdfjs-dist', details: error.message });
+  }
+};
