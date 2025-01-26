@@ -548,7 +548,7 @@ export const summarizeCharactersUpTo = async (req, res) => {
             name: "<Name of the character>",
             role: "<Role or significance of the character in the text>",
             details: "<Brief details or actions related to the character>"
-          JSON arrays: ${chunkSummaries.join('\n\n')}
+          Text: ${chunkSummaries.join('\n\n')}
         `,
         },
       ],

@@ -54,8 +54,6 @@ const Bookshelf = () => {
       </div>
       </div>
 
-      
-
       <div className="flex items-center">
         <div
           ref={bookshelfRef}

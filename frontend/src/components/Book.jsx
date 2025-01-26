@@ -16,11 +16,10 @@ const resizeObserverOptions = {};
 const scale = 0.6;
 const maxWidth = 900;
 
-export default function Book() {
+export default function Book({ currentPage, setCurrentPage }) {
   const { selectedFile } = pdfStore();
   const [file, setFile] = useState(selectedFile.url);
   const [numPages, setNumPages] = useState(null);
-  const [currentPage, setCurrentPage] = useState(1); // State for current page
   const [containerRef, setContainerRef] = useState(null);
   const [containerWidth, setContainerWidth] = useState(null);
 

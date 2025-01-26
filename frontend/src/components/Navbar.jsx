@@ -33,17 +33,16 @@ const Navbar = () => {
   return (
     <div className="w-full flex items-center px-10 pt-6 pb-4">
       {/* Logo */}
-      <div className="flex items-center">
-        <Link to="/">
-          <img
-            src="/logo.svg"
-            alt="Logo"
-            className="h-12 w-12"
-            onClick={handleButtonPress}
-          />
-        </Link>
+
+      <Link to="/" className="flex items-center">
+        <img
+          src="/logo.svg"
+          alt="Logo"
+          className="h-12 w-12"
+          onClick={handleButtonPress}
+        />
         <h1 className="text-3xl font-semibold pl-4">SummarAI</h1>
-      </div>
+      </Link>
 
       <div className="ml-auto flex items-center gap-8">
         {/* Profile Picture Dropdown */}
@@ -72,12 +71,16 @@ const Navbar = () => {
                 <div className="card-body">
                   <div className="flex items-center gap-3">
                     <img src="/person.svg" alt="Name" className="size-5" />
-                    <h2 className="card-title">Name: <p className="pl-3">{authUser.name}</p></h2>
+                    <h2 className="card-title">
+                      Name: <p className="pl-3">{authUser.name}</p>
+                    </h2>
                   </div>
 
                   <div className="flex items-center gap-3 pt-1">
                     <img src="/mail.svg" alt="Email" className="size-5" />
-                    <h2 className="flex">Email: <p className="pl-10">{authUser.email}</p></h2>
+                    <h2 className="flex">
+                      Email: <p className="pl-10">{authUser.email}</p>
+                    </h2>
                   </div>
                   <div className="card-actions justify-end">
                     <button

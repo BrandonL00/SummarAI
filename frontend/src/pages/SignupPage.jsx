@@ -62,7 +62,7 @@ const SignUpPage = () => {
       {/*Name Field:*/}
       <div className="form-control">
         <label className="label pb-1">
-          <span className="label-text text-base font-medium">Name</span>
+          <span className="label-text text-base font-medium dark:text-white">Name</span>
         </label>
         <div className="relative">
           <img src="/person.svg" alt="user icon" className="absolute w-5 h-5 top-1/2 transform -translate-y-1/2 left-3" />
@@ -79,7 +79,7 @@ const SignUpPage = () => {
       {/*Email Field:*/}
       <div className="form-control">
         <label className="label pb-1">
-          <span className="label-text text-base font-medium">Email</span>
+          <span className="label-text text-base font-medium dark:text-white">Email</span>
         </label>
         <div className="relative">
           <img
@@ -100,7 +100,7 @@ const SignUpPage = () => {
       {/*Password Field:*/}
       <div className="form-control">
         <label className="label pb-1">
-          <span className="label-text text-base font-medium">Password</span>
+          <span className="label-text text-base font-medium dark:text-white">Password</span>
         </label>
         <div className="relative">
           <img src="/lock.svg" alt="lock icon" className="absolute w-5 h-5 top-1/2 transform -translate-y-1/2 left-3" />
@@ -130,7 +130,7 @@ const SignUpPage = () => {
       </button>
 
       <div className="text-center mt-4">
-        <p className="text-base-content/60 text-sm">
+        <p className="text-base-content/60 text-sm dark:text-white">
           Already have an account?{" "}
           <Link to="/login" className="link link-info dark:text-white">
             Login
