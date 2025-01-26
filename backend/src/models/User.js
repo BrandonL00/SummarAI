@@ -1,4 +1,4 @@
-import mongoose from 'mongoose'
+import mongoose from 'mongoose';
 
 const userSchema = new mongoose.Schema({
   name: { type: String, required: true },
@@ -6,11 +6,12 @@ const userSchema = new mongoose.Schema({
   password: { type: String, required: true },
   fileKeys: [
     {
-      type: String,
+      key: { type: String, required: true }, // The key (e.g., file identifier)
+      hasRead: { type: Boolean, default: false }, // Whether the file has been read
     },
   ],
 });
 
-const User = mongoose.model("User", userSchema)
+const User = mongoose.model("User", userSchema);
 
 export default User;
