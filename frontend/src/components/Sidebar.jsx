@@ -56,7 +56,9 @@ const Sidebar = () => {
     </div>
 
       {/* Add additional sidebar items here */}
-      <div className="flex-grow">{/* You can add more sidebar content here */}</div>
+      <div className="flex-grow translate-y-16">
+        <img src="/bookman.jpg" alt="Book Guy" className="animate-bounce"/>
+      </div>
 
       <div className="mt-auto flex justify-center pb-5">
         <button
