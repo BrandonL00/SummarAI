@@ -319,6 +319,70 @@ export const summarizeUpTo = async (req, res) => {
   }
 };
 
+export const generateFlashCardsUpTo = async (req, res) => {
+  const { fileKey, numCards, pageLimit } = req.query;
+
+  if (!fileKey) {
+    return res.status(400).json({ error: 'File key is required' });
+  }
+
+  try {
+    // Step 1: Extract text from the PDF using pdfjs-dist
+    const extractedText = await fetchAndParsePDFWithPdfJs(fileKey);
+
+    if (!extractedText) {
+      return res.status(500).json({ error: 'Failed to extract text from PDF' });
+    }
+
+    const pageTexts = extractedText.split('--- Page '); // Assuming page markers are present
+    const targetPageLimit = parseInt(pageLimit, 10) || pageTexts.length; // Default to all pages if no page limit is specified
+    const limitedText = pageTexts
+      .slice(0, targetPageLimit + 1) // Include only up to the target page
+      .join('--- Page '); // Rejoin with the marker
+
+    // Step 2: Chunk the extracted text
+    const maxChunkSize = 3000; // Adjust as needed to fit within GPT's token limit
+    const chunks = chunkText(limitedText, maxChunkSize);
+
+    // Step 3: Generate flashcards over chunks
+    const chunkSummaries = await Promise.all(
+      chunks.map(async (chunk) => {
+        const response = await openai.chat.completions.create({
+          model: 'gpt-3.5-turbo', // Or gpt-4
+          messages: [
+            {
+              role: 'user',
+              content: `Note important details in the following text: ${chunk}`,
+            },
+          ],
+        });
+        return response.choices[0].message.content.trim();
+      })
+    );
+
+    // Step 4: Combine chunk summaries into a final summary
+    const finalSummaryResponse = await openai.chat.completions.create({
+      model: 'gpt-3.5-turbo',
+      messages: [
+        {
+          role: 'user',
+          content: `Combine the following notes and generate ${numCards} flash cards: ${chunkSummaries.join(
+            '\n\n'
+          )}`,
+        },
+      ],
+    });
+
+    const finalSummary = finalSummaryResponse.choices[0].message.content.trim();
+
+    // Step 5: Return the final summary
+    res.status(200).json({ flashcards: finalSummary });
+  } catch (error) {
+    console.error('Error generating flashcards using pdfjs-dist:', error);
+    res.status(500).json({ error: 'Failed to generate flashcards PDF using pdfjs-dist', details: error.message });
+  }
+};
+
 export const generateFlashCards = async (req, res) => {
   const { fileKey, numCards } = req.query;
 
@@ -370,9 +434,135 @@ export const generateFlashCards = async (req, res) => {
     const finalSummary = finalSummaryResponse.choices[0].message.content.trim();
 
     // Step 5: Return the final summary
-    res.status(200).json({ summary: finalSummary });
+    res.status(200).json({ flashcards: finalSummary });
   } catch (error) {
     console.error('Error generating flashcards using pdfjs-dist:', error);
     res.status(500).json({ error: 'Failed to generate flashcards PDF using pdfjs-dist', details: error.message });
+  }
+};
+
+export const summarizeCharacters = async (req, res) => {
+  const { fileKey } = req.query;
+
+  if (!fileKey) {
+    return res.status(400).json({ error: 'File key is required' });
+  }
+
+  try {
+    const extractedText = await fetchAndParsePDFWithPdfJs(fileKey);
+
+    if (!extractedText) {
+      return res.status(500).json({ error: 'Failed to extract text from PDF' });
+    }
+
+    const maxChunkSize = 3000; // Adjust as needed to fit within GPT's token limit
+    const chunks = chunkText(extractedText, maxChunkSize);
+
+    const chunkSummaries = await Promise.all(
+      chunks.map(async (chunk) => {
+        const response = await openai.chat.completions.create({
+          model: 'gpt-3.5-turbo', // Or gpt-4
+          messages: [
+            {
+              role: 'user',
+              content: `Note important people or characters and what they do in the text. Some might have external significance: ${chunk}`,
+            },
+          ],
+        });
+        return response.choices[0].message.content.trim();
+      })
+    );
+    const finalSummaryResponse = await openai.chat.completions.create({
+      model: 'gpt-3.5-turbo',
+      messages: [
+        {
+          role: 'user',
+          content: `Combine the following notes and list characters and their details: ${chunkSummaries.join(
+            '\n\n'
+          )}`,
+        },
+      ],
+    });
+
+    const finalSummary = finalSummaryResponse.choices[0].message.content.trim();
+
+    res.status(200).json({ characters: finalSummary });
+  } catch (error) {
+    console.error('Error generating characters using pdfjs-dist:', error);
+    res.status(500).json({ error: 'Failed to generate characters using pdfjs-dist', details: error.message });
+  }
+};
+
+export const summarizeCharactersUpTo = async (req, res) => {
+  const { fileKey, pageLimit } = req.query;
+
+  if (!fileKey) {
+    return res.status(400).json({ error: 'File key is required' });
+  }
+
+  try {
+    const extractedText = await fetchAndParsePDFWithPdfJs(fileKey);
+
+    if (!extractedText) {
+      return res.status(500).json({ error: 'Failed to extract text from PDF' });
+    }
+
+    const pageTexts = extractedText.split('--- Page '); // Assuming page markers are present
+    const targetPageLimit = parseInt(pageLimit, 10) || pageTexts.length; // Default to all pages if no page limit is specified
+    const limitedText = pageTexts
+      .slice(0, targetPageLimit + 1) // Include only up to the target page
+      .join('--- Page '); // Rejoin with the marker
+
+    const maxChunkSize = 3000; // Adjust as needed to fit within GPT's token limit
+    const chunks = chunkText(limitedText, maxChunkSize);
+
+    const chunkSummaries = await Promise.all(
+      chunks.map(async (chunk) => {
+        const response = await openai.chat.completions.create({
+          model: 'gpt-3.5-turbo', // Or gpt-4
+          messages: [
+            {
+              role: 'user',
+              content: `
+                Please extract the important characters or people from the following text and format the response as a JSON array. 
+                Each object should have the following structure:
+                {
+                  "name": "<Name of the character>",
+                  "role": "<Role or significance of the character in the text>",
+                  "details": "<Brief details or actions related to the character>"
+                }
+                Text: ${chunk}
+              `,
+            },
+          ],
+        });
+        return response.choices[0].message.content.trim();
+      })
+    );
+    const finalSummaryResponse = await openai.chat.completions.create({
+      model: 'gpt-3.5-turbo',
+      messages: [
+        {
+          role: 'user',
+          content: `
+          Combine the following JSON arrays into a single JSON array of characters, ensuring there are no duplicates.
+          Each object should retain the structure:
+          {
+            "name": "<Name of the character>",
+            "role": "<Role or significance of the character>",
+            "details": "<Brief details>"
+          }
+          JSON arrays: ${chunkSummaries.join('\n\n')}
+        `,
+        },
+      ],
+    });
+
+    const finalSummary = finalSummaryResponse.choices[0].message.content.trim();
+
+    res.status(200).json({ characters: finalSummary });
+  } catch (error) {
+    console.error('Error generating characters using pdfjs-dist:', error);
+    res.status(500).json({ error: 'Failed to generate characters using pdfjs-dist', details: error.message });
   }
 };
