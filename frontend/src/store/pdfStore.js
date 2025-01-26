@@ -49,7 +49,7 @@ export const pdfStore = create((set) => ({
               withCredentials: true, // Include cookies for authentication
             }
           );
-          console.log("File Response:", fileResponse);
+          //console.log("File Response:", fileResponse);
           return {
             ...fileResponse.data, // Include file data
             hasRead: file.hasRead, // Include the hasRead status

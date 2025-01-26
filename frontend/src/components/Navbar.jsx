@@ -5,7 +5,7 @@ import { useAuthStore } from "../store/useAuthStore"
 
 const Navbar = () => {
   const fileInputRef = useRef(null)
-  const { setFile, uploadFile } = pdfStore()
+  const { setFile, uploadFile, setSelectedFile } = pdfStore()
   const { authUser, logout } = useAuthStore()
   const [isOpen, setIsOpen] = useState(false)
 
@@ -26,12 +26,16 @@ const Navbar = () => {
     setIsOpen(!isOpen)
   }
 
+  const handleButtonPress = () => {
+    setSelectedFile(null);
+}
+
   return (
-    <div className="w-full flex items-center px-10 py-6">
+    <div className="w-full flex items-center px-10 pt-6 pb-4">
       {/* Logo */}
       <div className="flex items-center">
         <Link to="/">
-          <img src="/logo.svg" alt="Logo" className="h-12 w-12" />
+          <img src="/logo.svg" alt="Logo" className="h-12 w-12" onClick={handleButtonPress}/>
         </Link>
         <h1 className="text-3xl font-semibold pl-4">SummarAI</h1>
       </div>
@@ -46,7 +50,7 @@ const Navbar = () => {
             <img
               src={`https://ui-avatars.com/api/?background=random&name=${authUser.name}`}
               alt="Profile"
-              className="h-12 w-12 rounded-full object-cover"
+              className="size-14 rounded-full object-cover"
             />
           </button>
 

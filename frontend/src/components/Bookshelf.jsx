@@ -26,10 +26,10 @@ const Bookshelf = () => {
         {files.map((file, index) => (
           <div
             key={index}
-            className="card bg-white min-w-80 text-lg font-semibold text-center"
+            className="card bg-white min-w-80 text-lg font-semibold text-center overflow-clip"
           >
             <div className="card-body space-y-4">
-              <h1>{extractFileName(file.url)}</h1>
+              <h1 className="text-clip">{extractFileName(file.url)}</h1>
               <button
                 className="btn btn-primary"
                 onClick={openBook(file)}
