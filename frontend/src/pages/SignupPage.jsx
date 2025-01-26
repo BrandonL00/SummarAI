@@ -46,11 +46,11 @@ const SignUpPage = () => {
   };
 
   return (
-    <div className="h-dvh min-h-max grid gap-4 sm:gap-2 justify-center items-center bg-lightGray-50">
+    <div className="h-screen grid gap-4 sm:gap-2 justify-center items-center bg-[#bedaff]">
 
       {/*Logo and Welcome Message:*/}
       <div className="mt-24 grid justify-center items-center text-center">
-        <img className="justify-self-center" src="/logo.svg" alt="logo" />
+        <img className="justify-self-center" src="/sum-logo.png" alt="logo" />
         <h1 className="font-bold text-3xl"> Welcome to SummarAI! </h1>
         <p className="text-lg"> Sign up to get started </p>
       </div>
@@ -58,7 +58,7 @@ const SignUpPage = () => {
       {/*Sign Up Form:*/}
       <div className="card bg-white w-[90vw] max-w-md shadow-2xl mb-32 justify-self-center rounded-3xl sm:w-[85vw] md:w-[75vw] lg:w-[65vw]">
   <div className="card-body p-6 sm:p-8">
-    <form onSubmit={handleSubmit} className="space-y-5">
+    <form onSubmit={handleSubmit} className="space-y-3">
       {/*Name Field:*/}
       <div className="form-control">
         <label className="label pb-1">

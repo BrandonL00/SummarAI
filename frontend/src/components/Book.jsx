@@ -13,7 +13,7 @@ const options = {
 };
 
 const resizeObserverOptions = {};
-
+const scale = 0.55;
 const maxWidth = 900;
 
 export default function Book() {
@@ -53,9 +53,9 @@ export default function Book() {
   }
 
   return (
-    <div className="Sample overflow-y-scroll h-screen mt-10 justify-center items-center place-content-center justify-self-center w-[55%] bg-white rounded-2xl">
+    <div className="Sample overflow-y-scroll w-[40%] h-[90%] mt-10 justify-center items-center place-content-center justify-self-center bg-white rounded-2xl">
       <div className="Sample__container">
-        <div className="Sample__container__document">
+        <div className="Sample__container__document flex justify-center items-center">
           <Document
             file={file}
             onLoadSuccess={({ numPages }) => setNumPages(numPages)}
@@ -64,13 +64,13 @@ export default function Book() {
             <Page
               pageNumber={currentPage}
               width={
-                containerWidth ? Math.min(containerWidth, maxWidth) : maxWidth
+                containerWidth ? Math.min(containerWidth, maxWidth) * scale : maxWidth * scale
               }
               className="border border-gray-300 my-4"
             />
           </Document>
         </div>
-        <div className="flex justify-between items-center mt-4">
+        <div className="flex justify-between items-center mt-4 mx-12">
           <button
             onClick={handlePreviousPage}
             disabled={currentPage <= 1}

@@ -11,7 +11,13 @@ const Bookshelf = () => {
 
   const extractFileName = (url) => {
     const match = url.match(/-([^/]+\.pdf)\?/);
-    return match ? match[1] : "Unknown file";
+    if (match) {
+      let fileName = match[1];
+      // Replace special characters (except ') and numbers with spaces, and remove "pdf" substrings
+      fileName = fileName.replace(/[^a-zA-Z']/g, " ").replace(/pdf/gi, "");
+      return fileName.trim();
+    }
+    return "Unknown file";
   };
 
   const openBook = (file) => () => {
@@ -30,10 +36,7 @@ const Bookshelf = () => {
           >
             <div className="card-body space-y-4">
               <h1 className="text-clip">{extractFileName(file.url)}</h1>
-              <button
-                className="btn btn-primary"
-                onClick={openBook(file)}
-              >
+              <button className="btn btn-primary justify-self-end" onClick={openBook(file)}>
                 Open Book
               </button>
             </div>
