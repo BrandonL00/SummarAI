@@ -5,6 +5,8 @@ import toast from "react-hot-toast";
 export const pdfStore = create((set) => ({
   file: null,
   files: [],
+  selectedFile: null,
+  setSelectedFile: (file) => set({ selectedFile: file }),
   setFile: (file) => set({ file }),
   setFiles: (files) => set({ files }),
   setFile: (file) => set({ file }),

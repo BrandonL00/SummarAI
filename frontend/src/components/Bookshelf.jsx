@@ -1,10 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { useStore } from "zustand";
-import { pdfStore } from "../store/pdfStore";
+import { pdfStore } from "../store/pdfStore.js";
 
 const Bookshelf = () => {
-  const { files, getFiles } = useStore(pdfStore);
-  const [selectedFile, setSelectedFile] = useState(null);
+  const { files, getFiles, selectedFile, setSelectedFile } = useStore(pdfStore);
 
   useEffect(() => {
     getFiles();
@@ -13,6 +12,11 @@ const Bookshelf = () => {
   const extractFileName = (url) => {
     const match = url.match(/-([^/]+\.pdf)\?/);
     return match ? match[1] : "Unknown file";
+  };
+
+  const openBook = (file) => () => {
+    setSelectedFile(file);
+    console.log("Selected File:", selectedFile);
   };
 
   return (
@@ -26,7 +30,12 @@ const Bookshelf = () => {
           >
             <div className="card-body space-y-4">
               <h1>{extractFileName(file.url)}</h1>
-              <button className="btn btn-primary">Open Book</button>
+              <button
+                className="btn btn-primary"
+                onClick={openBook(file)}
+              >
+                Open Book
+              </button>
             </div>
           </div>
         ))}

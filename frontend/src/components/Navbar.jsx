@@ -25,7 +25,7 @@ const Navbar = () => {
       {/* Logo */}
       <div className="flex place-content-center">
         <Link to="/">
-          <img src="/logo.svg" alt="Logo" className="size-10" />
+          <img src="/logo.svg" alt="Logo" className="size-10"/>
         </Link>
 
         <h1 className="text-3xl font-semibold text-center pl-4">SummarAI</h1>
