@@ -9,10 +9,7 @@ const BookContainer = () => {
   const { selectedFile } = useStore(pdfStore);
 
   return (
-    <div className="w-full h-screen justify-center text-center">
-      <h1>Book Container</h1>
-      <p>{selectedFile.url}</p>
-      {/* {<PDF url={selectedFile.url}></PDF>} */}
+    <div className="w-full h-[105dvh] justify-center text-center bg-lightGray-50">
       <Book/>
     </div>
   );

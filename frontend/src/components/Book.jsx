@@ -14,7 +14,7 @@ const options = {
 
 const resizeObserverOptions = {};
 
-const maxWidth = 800;
+const maxWidth = 900;
 
 export default function Book() {
   const { selectedFile } = pdfStore();
@@ -40,10 +40,7 @@ export default function Book() {
   }
 
   return (
-    <div className="Sample">
-      <header>
-        <h1>react-pdf sample</h1>
-      </header>
+    <div className="Sample overflow-y-scroll h-screen mt-10 justify-center items-center place-content-center justify-self-center w-[55%] bg-white rounded-2xl">
       <div className="Sample__container">
         <div className="Sample__container__document">
           <Document
@@ -58,6 +55,7 @@ export default function Book() {
                 width={
                   containerWidth ? Math.min(containerWidth, maxWidth) : maxWidth
                 }
+                className="border border-gray-300 my-4"
               />
             ))}
           </Document>

@@ -8,7 +8,9 @@ import { useStore } from "zustand";
 const HomePage = () => {
     const { selectedFile } = useStore(pdfStore);
   return (
-    <div className="w-full h-screen overflow-hidden">
+    <div className={`w-full h-screen ${
+        selectedFile ? "overflow-auto" : "overflow-hidden"
+    }`}>
       <Navbar />
       <div className="flex">
         {selectedFile ? (
