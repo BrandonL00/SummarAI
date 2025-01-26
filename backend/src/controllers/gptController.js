@@ -1,7 +1,6 @@
 import { OpenAI } from 'openai';
-import axios from 'axios';
-import pdfParse from 'pdf-parse';
-import { generateSignedUrl } from '../controllers/fileController.js';
+import { fetchAndParsePDF, fetchAndParsePDFWithPdfLib, chunkText, fetchAndParsePDFWithPdfJs } from '../utils/gptUtils.js';
+
 
 // Initialize OpenAI API
 const openai = new OpenAI({
@@ -29,29 +28,6 @@ export const summarizeText = async (req, res) => {
   }
 };
 
-// Fetch and parse PDF content from S3
-export const fetchAndParsePDF = async (fileKey) => {
-  if (!fileKey) {
-    throw new Error('File key is required');
-  }
-
-  try {
-    // Step 1: Generate signed URL
-    const fileUrl = await generateSignedUrl(fileKey);
-
-    // Step 2: Fetch the PDF file
-    const response = await axios.get(fileUrl, { responseType: 'arraybuffer' });
-    const pdfBuffer = Buffer.from(response.data);
-
-    // Step 3: Parse the PDF
-    const pdfData = await pdfParse(pdfBuffer);
-    return pdfData.text;
-  } catch (error) {
-    console.error('Error fetching or parsing PDF:', error);
-    throw new Error('Failed to fetch or parse PDF');
-  }
-};
-
 // Parse a PDF file and return the raw extracted text
 export const parsePDFfromURL = async (req, res) => {
   const { fileKey } = req.query;
@@ -69,13 +45,22 @@ export const parsePDFfromURL = async (req, res) => {
   }
 };
 
-// Utility to chunk text
-const chunkText = (text, chunkSize) => {
-  const chunks = [];
-  for (let i = 0; i < text.length; i += chunkSize) {
-    chunks.push(text.slice(i, i + chunkSize));
+// Parse a PDF file and return the raw extracted text using pdf-lib
+export const parsePDFfromURLWithPdfLib = async (req, res) => {
+  const { fileKey } = req.query;
+
+  if (!fileKey) {
+    return res.status(400).json({ error: 'File key is required' });
   }
-  return chunks;
+
+  try {
+    // Use the fetchAndParsePDFWithPdfLib utility
+    const extractedText = await fetchAndParsePDFWithPdfLib(fileKey);
+    res.status(200).json({ text: extractedText });
+  } catch (error) {
+    console.error('Error parsing PDF from URL using pdf-lib:', error);
+    res.status(500).json({ error: 'Failed to parse PDF using pdf-lib', details: error.message });
+  }
 };
 
 export const summarizePDF = async (req, res) => {
@@ -133,5 +118,203 @@ export const summarizePDF = async (req, res) => {
   } catch (error) {
     console.error('Error summarizing PDF:', error);
     res.status(500).json({ error: 'Failed to summarize PDF', details: error.message });
+  }
+};
+
+export const summarizePDFWithPdfLib = async (req, res) => {
+  const { fileKey } = req.query;
+
+  if (!fileKey) {
+    return res.status(400).json({ error: 'File key is required' });
+  }
+
+  try {
+    // Step 1: Extract text from the PDF using pdf-lib
+    const extractedText = await fetchAndParsePDFWithPdfLib(fileKey);
+
+    if (!extractedText) {
+      return res.status(500).json({ error: 'Failed to extract text from PDF' });
+    }
+
+    // Step 2: Chunk the extracted text
+    const maxChunkSize = 3000; // Adjust as needed to fit within GPT's token limit
+    const chunks = chunkText(extractedText, maxChunkSize);
+
+    // Step 3: Summarize each chunk
+    const chunkSummaries = await Promise.all(
+      chunks.map(async (chunk) => {
+        const response = await openai.chat.completions.create({
+          model: 'gpt-3.5-turbo', // Or gpt-4
+          messages: [
+            {
+              role: 'user',
+              content: `Summarize the following text: ${chunk}`,
+            },
+          ],
+        });
+        return response.choices[0].message.content.trim();
+      })
+    );
+
+    // Step 4: Combine chunk summaries into a final summary
+    const finalSummaryResponse = await openai.chat.completions.create({
+      model: 'gpt-3.5-turbo',
+      messages: [
+        {
+          role: 'user',
+          content: `Combine the following summaries into a single cohesive summary: ${chunkSummaries.join(
+            '\n\n'
+          )}`,
+        },
+      ],
+    });
+
+    const finalSummary = finalSummaryResponse.choices[0].message.content.trim();
+
+    // Step 5: Return the final summary
+    res.status(200).json({ summary: finalSummary });
+  } catch (error) {
+    console.error('Error summarizing PDF using pdf-lib:', error);
+    res.status(500).json({ error: 'Failed to summarize PDF using pdf-lib', details: error.message });
+  }
+};
+
+export const parsePDFfromURLWithPdfJs = async (req, res) => {
+  const { fileKey } = req.query;
+
+  if (!fileKey) {
+    return res.status(400).json({ error: 'File key is required' });
+  }
+
+  try {
+    // Use the fetchAndParsePDFWithPdfJs utility
+    const extractedText = await fetchAndParsePDFWithPdfJs(fileKey);
+    res.status(200).json({ text: extractedText });
+  } catch (error) {
+    console.error('Error parsing PDF from URL using pdfjs-dist:', error);
+    res.status(500).json({ error: 'Failed to parse PDF using pdfjs-dist', details: error.message });
+  }
+};
+
+export const summarizePDFWithPdfjs = async (req, res) => {
+  const { fileKey } = req.query;
+
+  if (!fileKey) {
+    return res.status(400).json({ error: 'File key is required' });
+  }
+
+  try {
+    // Step 1: Extract text from the PDF using pdf-lib
+    const extractedText = await fetchAndParsePDFWithPdfJs(fileKey);
+
+    if (!extractedText) {
+      return res.status(500).json({ error: 'Failed to extract text from PDF' });
+    }
+
+    // Step 2: Chunk the extracted text
+    const maxChunkSize = 3000; // Adjust as needed to fit within GPT's token limit
+    const chunks = chunkText(extractedText, maxChunkSize);
+
+    // Step 3: Summarize each chunk
+    const chunkSummaries = await Promise.all(
+      chunks.map(async (chunk) => {
+        const response = await openai.chat.completions.create({
+          model: 'gpt-3.5-turbo', // Or gpt-4
+          messages: [
+            {
+              role: 'user',
+              content: `Summarize the following text: ${chunk}`,
+            },
+          ],
+        });
+        return response.choices[0].message.content.trim();
+      })
+    );
+
+    // Step 4: Combine chunk summaries into a final summary
+    const finalSummaryResponse = await openai.chat.completions.create({
+      model: 'gpt-3.5-turbo',
+      messages: [
+        {
+          role: 'user',
+          content: `Combine the following summaries into a single cohesive summary: ${chunkSummaries.join(
+            '\n\n'
+          )}`,
+        },
+      ],
+    });
+
+    const finalSummary = finalSummaryResponse.choices[0].message.content.trim();
+
+    // Step 5: Return the final summary
+    res.status(200).json({ summary: finalSummary });
+  } catch (error) {
+    console.error('Error summarizing PDF using pdf-lib:', error);
+    res.status(500).json({ error: 'Failed to summarize PDF using pdf-lib', details: error.message });
+  }
+};
+
+export const summarizeUpTo = async (req, res) => {
+  const { fileKey, pageLimit } = req.query;
+
+  if (!fileKey) {
+    return res.status(400).json({ error: 'File key is required' });
+  }
+
+  try {
+    // Step 1: Extract text from the PDF using pdfjs-dist
+    const extractedText = await fetchAndParsePDFWithPdfJs(fileKey);
+
+    if (!extractedText) {
+      return res.status(500).json({ error: 'Failed to extract text from PDF' });
+    }
+
+    // Step 2: Extract only text up to the specified page limit
+    const pageTexts = extractedText.split('--- Page '); // Assuming page markers are present
+    const targetPageLimit = parseInt(pageLimit, 10) || pageTexts.length; // Default to all pages if no page limit is specified
+    const limitedText = pageTexts
+      .slice(0, targetPageLimit + 1) // Include only up to the target page
+      .join('--- Page '); // Rejoin with the marker
+
+    // Step 3: Chunk the extracted text
+    const maxChunkSize = 3000; // Adjust as needed to fit within GPT's token limit
+    const chunks = chunkText(limitedText, maxChunkSize);
+
+    // Step 4: Summarize each chunk
+    const chunkSummaries = await Promise.all(
+      chunks.map(async (chunk) => {
+        const response = await openai.chat.completions.create({
+          model: 'gpt-3.5-turbo', // Or gpt-4
+          messages: [
+            {
+              role: 'user',
+              content: `Summarize the following text: ${chunk}`,
+            },
+          ],
+        });
+        return response.choices[0].message.content.trim();
+      })
+    );
+
+    // Step 5: Combine chunk summaries into a final summary
+    const finalSummaryResponse = await openai.chat.completions.create({
+      model: 'gpt-3.5-turbo',
+      messages: [
+        {
+          role: 'user',
+          content: `Combine the following summaries into a single cohesive summary: ${chunkSummaries.join(
+            '\n\n'
+          )}`,
+        },
+      ],
+    });
+
+    const finalSummary = finalSummaryResponse.choices[0].message.content.trim();
+
+    // Step 6: Return the final summary
+    res.status(200).json({ summary: finalSummary });
+  } catch (error) {
+    console.error('Error summarizing PDF using pdfjs-dist:', error);
+    res.status(500).json({ error: 'Failed to summarize PDF using pdfjs-dist', details: error.message });
   }
 };
