@@ -2,7 +2,8 @@ import { Router } from 'express';
 import { parsePDFfromURL } from '../controllers/gptController.js';
 import { protectRoute } from '../middleware/auth.middleware.js';
 import { summarizeText, summarizePDF, summarizePDFWithPdfLib, parsePDFfromURLWithPdfLib, 
-    parsePDFfromURLWithPdfJs, summarizePDFWithPdfjs, summarizeUpTo, generateFlashCards } from '../controllers/gptController.js';
+    parsePDFfromURLWithPdfJs, summarizePDFWithPdfjs, summarizeUpTo, generateFlashCards, generateFlashCardsUpTo, 
+    summarizeCharacters, summarizeCharactersUpTo } from '../controllers/gptController.js';
 
 const router = Router();
 
@@ -16,5 +17,8 @@ router.post('/summarizePDF-lib', summarizePDFWithPdfLib)
 router.post('/summarizePDF-pdfjs', summarizePDFWithPdfjs)
 router.post('/summarizeUpTo', summarizeUpTo)
 router.post('/generateFlashCards', generateFlashCards)
+router.post('/generateFlashCardsUpTo', generateFlashCardsUpTo)
+router.post('/summarizeCharacters', summarizeCharacters)
+router.post('/summarizeCharactersUpTo', summarizeCharactersUpTo)
 
 export default router;
