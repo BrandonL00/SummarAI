@@ -366,7 +366,7 @@ export const generateFlashCardsUpTo = async (req, res) => {
       messages: [
         {
           role: 'user',
-          content: `Combine the following notes and generate ${numCards} flash cards: ${chunkSummaries.join(
+          content: `Combine the following notes and generate ${numCards} flash cards, and format as Q: or A: ${chunkSummaries.join(
             '\n\n'
           )}`,
         },

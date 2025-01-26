@@ -5,7 +5,7 @@ import { pdfStore } from "./pdfStore";
 import { extractFileKeyFromUrl } from "../utils/urlUtils";
 
 export const gptStore = create((set, get) => ({
-  currentPage: 11,
+  currentPage: 4,
 
   summarizeUpTo: async () => {
     const { selectedFile } = pdfStore.getState(); // Access selectedFile from pdfStore
@@ -44,7 +44,7 @@ export const gptStore = create((set, get) => ({
     const { currentPage } = get(); // Access currentPage from gptStore
     try {
       const response = await axiosInstance.post(
-        `/gpt/generateFlashCards?fileKey=${fileKey}&cardNum=10&pageLimit=${currentPage}`
+        `/gpt/generateFlashCards?fileKey=${fileKey}&cardNum=5&pageLimit=${currentPage}`
       );
       toast.success("Flashcards generated successfully!");
       return response.data;
