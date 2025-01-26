@@ -18,12 +18,14 @@ const LoginPage = () => {
   };
 
   return (
+
     <div className="h-dvh min-h-max grid gap-4 sm:gap-2 justify-center items-center bg-[#bedaff] ">
       {/*Logo and Welcome Message:*/}
       <div className="mt-24 grid justify-center items-center text-center ">
         <img className="justify-self-center" src="/sum-logo.png" alt="logo" />
         <h1 className="font-bold text-3xl"> Welcome to SummarAI! </h1>
         <p className="text-lg"> Sign in to get started </p>
+
       </div>
 
       {/*Sign in Form:*/}

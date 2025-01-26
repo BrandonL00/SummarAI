@@ -28,6 +28,7 @@ const Sidebar = () => {
 
   return (
     <div className="h-screen w-1/5 pt-10 px-4 text-center">
+
     {/* Radial Progress Circle */}
     <div className="flex justify-center items-center mb-6">
       <div
@@ -45,6 +46,7 @@ const Sidebar = () => {
           <span className="font-light flex items-baseline" style={{ fontSize: "clamp(0.75rem, 2vw, 1.25rem)" }}>
             <span className="text-purple-600 font-bold" style={{ fontSize: "clamp(1rem, 3vw, 2rem)" }}>
               {booksRead}
+
             </span>
             <span className="text-black">/{totalBooks}</span>
           </span>

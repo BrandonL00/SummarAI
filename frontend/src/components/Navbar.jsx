@@ -1,34 +1,49 @@
-import { Link } from "react-router-dom";
-import { useRef, useState } from "react";
-import { pdfStore } from "../store/pdfStore";
-import { useAuthStore } from "../store/useAuthStore";
+import React, { useRef, useEffect, useState } from "react"
+import { Link } from "react-router-dom"
+import { pdfStore } from "../store/pdfStore"
+import { useAuthStore } from "../store/useAuthStore"
+import { ThemeSwitcher } from "./ThemeSwitcher"
 
 const Navbar = () => {
-  const fileInputRef = useRef(null);
-  const { setFile, uploadFile, setSelectedFile } = pdfStore();
-  const { authUser, logout } = useAuthStore();
-  const [isOpen, setIsOpen] = useState(false);
+  const fileInputRef = useRef(null)
+  const { setFile, uploadFile, setSelectedFile } = pdfStore()
+  const { authUser, logout } = useAuthStore()
+  const [isDarkTheme, setIsDarkTheme] = useState(false)
+
+  useEffect(() => {
+    const updateTheme = () => {
+      setIsDarkTheme(document.documentElement.getAttribute("data-theme") === "dark")
+    }
+
+    // Initial theme check
+    updateTheme()
+
+    // Set up a MutationObserver to watch for theme changes
+    const observer = new MutationObserver(updateTheme)
+    observer.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ["data-theme"],
+    })
+
+    return () => observer.disconnect()
+  }, [])
 
   const handleUploadClick = () => {
-    fileInputRef.current.click();
-  };
+    fileInputRef.current.click()
+  }
 
   const handleFileChange = (e) => {
-    const file = e.target.files[0];
+    const file = e.target.files[0]
     if (file) {
-      console.log(file);
-      setFile(file);
-      uploadFile();
+      console.log(file)
+      setFile(file)
+      uploadFile()
     }
-  };
-
-  const toggleDropdown = () => {
-    setIsOpen(!isOpen);
-  };
+  }
 
   const handleButtonPress = () => {
-    setSelectedFile(null);
-  };
+    setSelectedFile(null)
+  }
 
   return (
     <div className="w-full flex items-center px-10 pt-6 pb-4">
@@ -60,6 +75,7 @@ const Navbar = () => {
 
           {isOpen && (
             <div className="absolute right-0 mt-2 w-96 origin-top-right z-50">
+
               <div className="card bg-base-100 shadow-xl">
                 <figure>
                   <img
@@ -75,7 +91,6 @@ const Navbar = () => {
                       Name: <p className="pl-3">{authUser.name}</p>
                     </h2>
                   </div>
-
                   <div className="flex items-center gap-3 pt-1">
                     <img src="/mail.svg" alt="Email" className="size-5" />
                     <h2 className="flex">
@@ -83,41 +98,23 @@ const Navbar = () => {
                     </h2>
                   </div>
                   <div className="card-actions justify-end">
-                    <button
-                      className="btn btn-primary"
-                      onClick={() => {
-                        logout();
-                        setIsOpen(false);
-                      }}
-                    >
+                    <button className="btn btn-error" onClick={logout}>
                       Logout
                     </button>
                   </div>
                 </div>
               </div>
-            </div>
-          )}
+            </li>
+          </ul>
         </div>
-
-        {/* Upload Button */}
-        <button
-          className="relative bg-gradient-to-r from-purple-400 to-blue-500 text-white rounded-full px-8 h-12 overflow-hidden group transition-all duration-300 ease-out hover:scale-105"
-          onClick={handleUploadClick}
-        >
-          <span className="absolute inset-0 w-full h-full transition duration-300 ease-out transform -translate-x-full bg-gradient-to-r from-purple-500 to-blue-600 group-hover:translate-x-0"></span>
-          <span className="relative flex items-center justify-center h-full">
-            <h1 className="text-xl z-10 font-semibold">Upload</h1>
-          </span>
+        <button className="btn btn-primary text-primary-content rounded-full px-8 h-12" onClick={handleUploadClick}>
+          Upload
         </button>
-        <input
-          type="file"
-          ref={fileInputRef}
-          className="hidden"
-          onChange={handleFileChange}
-        />
+        <input type="file" ref={fileInputRef} className="hidden" onChange={handleFileChange} />
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default Navbar;
+export default Navbar
+
