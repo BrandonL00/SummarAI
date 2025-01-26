@@ -35,10 +35,10 @@ const Navbar = () => {
 
         {/* Upload Button */}
         <button
-          className="bg-blue-500 text-white rounded-3xl px-7 h-14 transition-transform transform hover:scale-105"
+          className="bg-blue-500 text-white rounded-3xl px-7 h-12 transition-transform transform hover:scale-105"
           onClick={handleUploadClick}
         >
-          <h1 className="text-2xl">Upload</h1>
+          <h1 className="text-lg">Upload</h1>
         </button>
         <input
           type="file"
