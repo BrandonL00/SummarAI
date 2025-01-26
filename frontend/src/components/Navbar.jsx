@@ -1,10 +1,12 @@
 import { Link } from "react-router-dom";
 import { useRef } from "react";
 import { pdfStore } from "../store/pdfStore";
+import { useAuthStore } from "../store/useAuthStore";
 
 const Navbar = () => {
   const fileInputRef = useRef(null);
   const { setFile, uploadFile } = pdfStore();
+  const { authUser } = useAuthStore();
   const handleUploadClick = () => {
     fileInputRef.current.click();
   };
@@ -31,7 +33,7 @@ const Navbar = () => {
 
       <div className="justify-self-end ml-auto flex gap-6 items-center">
         {/* Profile Picture */}
-        <img src="/circle.png" alt="Profile" className="size-18" />
+        <img src={`https://ui-avatars.com/api/?background=random&name=${authUser.name}`} alt="Profile" className="size-18 rounded-full" />
 
         {/* Upload Button */}
         <button
