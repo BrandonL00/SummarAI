@@ -15,7 +15,7 @@ const Summarize1 = () => {
       }, [summarizeUpTo]);
 
     return (
-      <div className="h-full w-96 bg-white rounded-lg shadow-lg mt-56 -translate-x-0 p-8">
+      <div className="max-h-[80dvh] overflow-y-scroll w-96 bg-white rounded-lg shadow-lg mt-44 -translate-x-0 p-8">
         <h1 className="font-bold text-2xl">Summary</h1>
         <p>{summary}</p>
       </div>

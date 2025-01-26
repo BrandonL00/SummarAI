@@ -42,7 +42,7 @@ const GenFlash = () => {
   }, [generateFlashCardsUpTo]);
 
   return (
-    <div className="h-full w-96 bg-white rounded-lg shadow-lg mt-56 -translate-x-0 p-8">
+    <div className="h-[80dvh] overflow-y-scroll w-96 bg-white rounded-lg shadow-lg mt-44 -translate-x-0 p-8">
       <h1 className="font-bold text-2xl mb-4">Flashcards</h1>
 
       {flashcards.length > 0 ? (
@@ -64,7 +64,7 @@ const GenFlash = () => {
           ))}
         </div>
       ) : (
-        <p className="text-gray-500">No flashcards available yet.</p>
+        <p className="text-gray-500">Loading...</p>
       )}
     </div>
   );
